@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+:host ::ng-deep .p-card .p-card-body {
+  padding: 1.5rem;
+}
+
+:host ::ng-deep .p-card .p-card-footer {
+  padding: 0 1.5rem 1.5rem;
+}
+
+:host ::ng-deep .p-password input {
+  width: 100%;
+}
+
+:host ::ng-deep .p-inputtext:focus {
+  box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb), 0.25);
+}
+
+:host ::ng-deep .p-button-lg {
+  font-size: 1rem;
+  padding: 0.875rem 1.25rem;
+}

@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+
+/* Dialog animations */
+::ng-deep .p-dialog {
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Form fields */
+input[pInputText] {
+  transition: all 0.3s ease;
+}
+
+input[pInputText]:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Label styling */
+label {
+  color: #495057;
+  font-weight: 500;
+}
+
+/* Error message styling */
+small.text-red-500 {
+  display: block;
+  margin-top: 0.25rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Button group */
+.flex.gap-2 {
+  margin-top: 1.5rem;
+}

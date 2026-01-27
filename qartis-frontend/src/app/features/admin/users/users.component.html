@@ -1,0 +1,325 @@
+<div class="min-h-screen surface-ground">
+  <!-- Header -->
+  <div class="surface-card border-bottom-1 surface-border px-5 py-3 shadow-1" data-aos="fade-down">
+    <div class="flex align-items-center justify-content-between">
+      <h1 class="text-2xl font-bold text-900 m-0">
+        <i class="pi pi-users mr-2 text-primary"></i>Gestion des utilisateurs
+      </h1>
+      <p-button 
+        label="Déconnexion" 
+        icon="pi pi-sign-out" 
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="logout()">
+      </p-button>
+    </div>
+  </div>
+
+  <div class="p-4">
+    <!-- Toolbar with filters -->
+    <p-toolbar styleClass="mb-4 surface-card" data-aos="fade-up">
+      <ng-template pTemplate="left">
+        <p-button 
+          label="Ajouter" 
+          icon="pi pi-plus" 
+          severity="success"
+          class="mr-2"
+          (onClick)="openNewUserDialog()">
+        </p-button>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <span class="p-input-icon-left mr-2">
+          <i class="pi pi-search"></i>
+          <input 
+            pInputText 
+            [(ngModel)]="filterName" 
+            placeholder="Nom..." 
+            class="w-10rem"
+            (keyup.enter)="applyFilters()" />
+        </span>
+        <span class="p-input-icon-left mr-2">
+          <i class="pi pi-envelope"></i>
+          <input 
+            pInputText 
+            [(ngModel)]="filterEmail" 
+            placeholder="Email..." 
+            class="w-10rem"
+            (keyup.enter)="applyFilters()" />
+        </span>
+        <span class="p-input-icon-left mr-2">
+          <i class="pi pi-building"></i>
+          <input 
+            pInputText 
+            [(ngModel)]="filterCompany" 
+            placeholder="Entreprise..." 
+            class="w-10rem"
+            (keyup.enter)="applyFilters()" />
+        </span>
+        <p-select 
+          [(ngModel)]="filterRole" 
+          [options]="roleOptions" 
+          placeholder="Rôle"
+          class="mr-2"
+          styleClass="w-8rem"
+          (onChange)="applyFilters()">
+        </p-select>
+        <p-button 
+          icon="pi pi-filter" 
+          severity="info"
+          pTooltip="Appliquer les filtres"
+          class="mr-2"
+          (onClick)="applyFilters()">
+        </p-button>
+        <p-button 
+          icon="pi pi-filter-slash" 
+          severity="secondary"
+          [outlined]="true"
+          pTooltip="Effacer les filtres"
+          (onClick)="clearFilters()">
+        </p-button>
+      </ng-template>
+    </p-toolbar>
+
+    <!-- Data Table -->
+    <p-card>
+      <p-table 
+        #dt
+        [value]="users" 
+        [lazy]="true"
+        [loading]="loading"
+        [totalRecords]="totalRecords"
+        [paginator]="true" 
+        [rows]="rows"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} utilisateurs"
+        (onLazyLoad)="loadUsers($event)"
+        sortField="id"
+        [sortOrder]="1"
+        styleClass="p-datatable-striped p-datatable-sm">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id" style="width: 80px">
+              ID <p-sortIcon field="id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="firstName">
+              Nom <p-sortIcon field="firstName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="email">
+              Email <p-sortIcon field="email"></p-sortIcon>
+            </th>
+            <th pSortableColumn="role" style="width: 120px">
+              Rôle <p-sortIcon field="role"></p-sortIcon>
+            </th>
+            <th style="width: 180px">Entreprise</th>
+            <th style="width: 100px">Statut</th>
+            <th style="width: 150px">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td class="font-semibold text-500">{{ user.id }}</td>
+            <td>
+              <div class="flex align-items-center">
+                <div class="flex align-items-center justify-content-center bg-primary border-circle mr-2" style="width: 32px; height: 32px;">
+                  <span class="text-white font-bold text-sm">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}</span>
+                </div>
+                <span class="font-medium">{{ user.firstName }} {{ user.lastName }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="text-600">{{ user.email }}</span>
+            </td>
+            <td>
+              <p-tag 
+                [value]="user.role" 
+                [severity]="getRoleSeverity(user.role)">
+              </p-tag>
+            </td>
+            <td>
+              <a 
+                *ngIf="user.companyId" 
+                (click)="goToCompany(user.companyId)"
+                class="text-primary cursor-pointer hover:underline font-medium">
+                <i class="pi pi-building mr-1"></i>{{ user.companyName }}
+              </a>
+              <span *ngIf="!user.companyId" class="text-400">—</span>
+            </td>
+            <td>
+              <p-tag 
+                [value]="user.isActive ? 'Actif' : 'Inactif'" 
+                [severity]="getStatusSeverity(user.isActive)"
+                [icon]="user.isActive ? 'pi pi-check' : 'pi pi-times'">
+              </p-tag>
+            </td>
+            <td>
+              <div class="flex gap-1">
+                <p-button 
+                  icon="pi pi-pencil" 
+                  severity="info" 
+                  [text]="true"
+                  [rounded]="true"
+                  pTooltip="Modifier"
+                  (onClick)="openEditUserDialog(user)">
+                </p-button>
+                <p-button 
+                  [icon]="user.isActive ? 'pi pi-lock' : 'pi pi-lock-open'" 
+                  [severity]="user.isActive ? 'warn' : 'success'" 
+                  [text]="true"
+                  [rounded]="true"
+                  [pTooltip]="user.isActive ? 'Désactiver' : 'Activer'"
+                  (onClick)="toggleStatus(user)">
+                </p-button>
+                <p-button 
+                  icon="pi pi-trash" 
+                  severity="danger" 
+                  [text]="true"
+                  [rounded]="true"
+                  pTooltip="Supprimer"
+                  (onClick)="confirmDelete(user)">
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center py-5">
+              <i class="pi pi-inbox text-4xl text-300 mb-3 block"></i>
+              <span class="text-600">Aucun utilisateur trouvé</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</div>
+
+<!-- User Dialog (Create/Edit) -->
+<p-dialog 
+  [(visible)]="userDialog" 
+  [header]="isEditMode ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [closable]="true"
+  (onHide)="closeDialog()">
+  
+  <form [formGroup]="userForm" class="p-fluid">
+    <div class="grid formgrid">
+      <!-- First Name -->
+      <div class="field col-12 md:col-6">
+        <label for="firstName" class="font-medium">Prénom *</label>
+        <input 
+          pInputText 
+          id="firstName" 
+          formControlName="firstName"
+          [ngClass]="{'ng-invalid ng-dirty': userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched}" />
+        <small *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched" class="p-error">
+          Prénom requis (min 2 car.)
+        </small>
+      </div>
+
+      <!-- Last Name -->
+      <div class="field col-12 md:col-6">
+        <label for="lastName" class="font-medium">Nom *</label>
+        <input 
+          pInputText 
+          id="lastName" 
+          formControlName="lastName"
+          [ngClass]="{'ng-invalid ng-dirty': userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched}" />
+        <small *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched" class="p-error">
+          Nom requis (min 2 car.)
+        </small>
+      </div>
+
+      <!-- Email -->
+      <div class="field col-12">
+        <label for="email" class="font-medium">Email *</label>
+        <input 
+          pInputText 
+          id="email" 
+          formControlName="email"
+          type="email"
+          [ngClass]="{'ng-invalid ng-dirty': userForm.get('email')?.invalid && userForm.get('email')?.touched}" />
+        <small *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="p-error">
+          Email valide requis
+        </small>
+      </div>
+
+      <!-- Password (only for create or optional for edit) -->
+      <div class="field col-12" *ngIf="!isEditMode">
+        <label for="password" class="font-medium">Mot de passe *</label>
+        <p-password 
+          id="password" 
+          formControlName="password"
+          [toggleMask]="true"
+          [feedback]="true"
+          styleClass="w-full"
+          [inputStyle]="{'width': '100%'}">
+        </p-password>
+        <small *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="p-error">
+          Mot de passe requis (min 8 car.)
+        </small>
+      </div>
+
+      <!-- Role -->
+      <div class="field col-12 md:col-6">
+        <label for="role" class="font-medium">Rôle *</label>
+        <p-select 
+          id="role"
+          formControlName="role"
+          [options]="[{label: 'Admin', value: 'ADMIN'}, {label: 'Client', value: 'CLIENT'}]"
+          placeholder="Sélectionner un rôle"
+          styleClass="w-full">
+        </p-select>
+      </div>
+
+      <!-- Company -->
+      <div class="field col-12 md:col-6">
+        <label for="companyId" class="font-medium">Entreprise</label>
+        <p-select 
+          id="companyId"
+          formControlName="companyId"
+          [options]="companies"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Sélectionner..."
+          [showClear]="true"
+          styleClass="w-full">
+        </p-select>
+      </div>
+
+      <!-- Active (only for edit) -->
+      <div class="field col-12" *ngIf="isEditMode">
+        <div class="flex align-items-center">
+          <p-toggleswitch formControlName="isActive" inputId="isActive"></p-toggleswitch>
+          <label for="isActive" class="ml-2">Utilisateur actif</label>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2">
+      <p-button 
+        label="Annuler" 
+        icon="pi pi-times" 
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="closeDialog()">
+      </p-button>
+      <p-button 
+        [label]="isEditMode ? 'Mettre à jour' : 'Créer'" 
+        [icon]="isEditMode ? 'pi pi-check' : 'pi pi-plus'" 
+        [loading]="submitting"
+        (onClick)="saveUser()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm Delete Dialog -->
+<p-confirmDialog></p-confirmDialog>

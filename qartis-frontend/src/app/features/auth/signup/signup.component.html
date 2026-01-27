@@ -1,0 +1,151 @@
+<div class="flex align-items-center justify-content-center min-h-screen surface-ground py-5">
+  <div class="w-full max-w-30rem mx-3" data-aos="fade-up" data-aos-delay="100">
+    <p-card styleClass="shadow-4 border-round-xl">
+      <ng-template pTemplate="header">
+        <div class="text-center pt-5 pb-2" data-aos="fade-down">
+          <i class="pi pi-user-plus text-5xl text-primary mb-3"></i>
+          <h2 class="m-0 text-900 font-bold">Créer un compte</h2>
+          <p class="text-600 mt-2 mb-0">Rejoignez la communauté Qartis</p>
+        </div>
+      </ng-template>
+
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="p-fluid">
+        <!-- Error Message -->
+        <p-message 
+          *ngIf="errorMessage" 
+          severity="error" 
+          [text]="errorMessage"
+          styleClass="w-full mb-4"
+          data-aos="fade-in">
+        </p-message>
+
+        <!-- Name Fields (Grid) -->
+        <div class="grid formgrid">
+          <div class="field col-12 md:col-6 mb-3" data-aos="fade-right">
+            <label for="firstName" class="block text-900 font-medium mb-2">
+              <i class="pi pi-user mr-2"></i>Prénom
+            </label>
+            <input 
+              pInputText 
+              id="firstName" 
+              formControlName="firstName"
+              placeholder="Jean"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': firstNameInvalid}" />
+            <small *ngIf="firstNameInvalid" class="p-error block mt-1">
+              <i class="pi pi-exclamation-circle mr-1"></i>Prénom requis (min 2 car.)
+            </small>
+          </div>
+          <div class="field col-12 md:col-6 mb-3" data-aos="fade-left">
+            <label for="lastName" class="block text-900 font-medium mb-2">
+              <i class="pi pi-user mr-2"></i>Nom
+            </label>
+            <input 
+              pInputText 
+              id="lastName" 
+              formControlName="lastName"
+              placeholder="Dupont"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': lastNameInvalid}" />
+            <small *ngIf="lastNameInvalid" class="p-error block mt-1">
+              <i class="pi pi-exclamation-circle mr-1"></i>Nom requis (min 2 car.)
+            </small>
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="field mb-3">
+          <label for="email" class="block text-900 font-medium mb-2">
+            <i class="pi pi-envelope mr-2"></i>Email
+          </label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-at"></i>
+            <input 
+              pInputText 
+              id="email" 
+              formControlName="email"
+              type="email"
+              placeholder="jean.dupont@example.com"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': emailInvalid}" />
+          </span>
+          <small *ngIf="emailInvalid" class="p-error block mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>Email valide requis
+          </small>
+        </div>
+
+        <!-- Password Field -->
+        <div class="field mb-3">
+          <label for="password" class="block text-900 font-medium mb-2">
+            <i class="pi pi-key mr-2"></i>Mot de passe
+          </label>
+          <p-password 
+            id="password" 
+            formControlName="password"
+            [toggleMask]="true"
+            [feedback]="true"
+            promptLabel="Entrez un mot de passe"
+            weakLabel="Faible"
+            mediumLabel="Moyen"
+            strongLabel="Fort"
+            styleClass="w-full"
+            [inputStyle]="{'width': '100%'}"
+            [inputStyleClass]="passwordInvalid ? 'ng-invalid ng-dirty' : ''">
+          </p-password>
+          <div *ngIf="passwordInvalid" class="mt-1">
+            <small *ngFor="let err of passwordErrors" class="p-error block">
+              <i class="pi pi-exclamation-circle mr-1"></i>{{ err }}
+            </small>
+          </div>
+          <small *ngIf="!passwordInvalid" class="text-500 block mt-1">
+            <i class="pi pi-info-circle mr-1"></i>Min 8 car., majuscule, minuscule, chiffre
+          </small>
+        </div>
+
+        <!-- Company Field (Optional) -->
+        <div class="field mb-4">
+          <label for="companyName" class="block text-900 font-medium mb-2">
+            <i class="pi pi-building mr-2"></i>Entreprise <span class="text-500 font-normal">(optionnel)</span>
+          </label>
+          <input 
+            pInputText 
+            id="companyName" 
+            formControlName="companyName"
+            placeholder="Nom de votre entreprise"
+            class="w-full" />
+        </div>
+
+        <!-- Submit Button -->
+        <p-button 
+          label="Créer mon compte" 
+          icon="pi pi-check"
+          iconPos="right"
+          [loading]="loading"
+          [disabled]="loading"
+          styleClass="w-full p-button-lg"
+          type="submit">
+        </p-button>
+      </form>
+
+      <p-divider align="center" styleClass="my-4">
+        <span class="text-600 font-normal">OU</span>
+      </p-divider>
+
+      <div class="text-center">
+        <p class="text-600 m-0">
+          Déjà un compte ? 
+          <a routerLink="/login" class="text-primary font-bold no-underline hover:underline cursor-pointer">
+            Se connecter
+          </a>
+        </p>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <div class="text-center text-xs text-500 pt-2">
+          <i class="pi pi-shield mr-1"></i>
+          Vos données sont protégées · Qartis © 2026
+        </div>
+      </ng-template>
+    </p-card>
+  </div>
+</div>

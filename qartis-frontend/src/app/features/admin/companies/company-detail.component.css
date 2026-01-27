@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+:host ::ng-deep .p-card .p-card-body {
+  padding: 1.5rem;
+}
+
+:host ::ng-deep .p-card .p-card-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--surface-200);
+}

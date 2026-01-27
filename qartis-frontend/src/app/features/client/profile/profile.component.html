@@ -1,0 +1,253 @@
+<p-toast position="top-right"></p-toast>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white border-bottom-1 surface-border px-5 py-3 shadow-1">
+    <div class="flex align-items-center justify-content-between">
+      <h1 class="text-3xl font-bold text-900 m-0" data-aos="fade-right">
+        <i class="pi pi-user mr-2"></i>Mon Profil
+      </h1>
+      <p-button 
+        label="Déconnexion" 
+        icon="pi pi-sign-out" 
+        severity="secondary"
+        (onClick)="logout()"
+        data-aos="fade-left">
+      </p-button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="p-5">
+    <div class="grid">
+      <!-- Profile Card -->
+      <div class="col-12 md:col-8 lg:col-6 mx-auto mb-4" data-aos="fade-up">
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="px-4 pt-4 flex align-items-center justify-content-between">
+              <h2 class="m-0">
+                <i class="pi pi-info-circle mr-2"></i>Informations personnelles
+              </h2>
+              <p-button 
+                [icon]="editMode ? 'pi pi-times' : 'pi pi-pencil'"
+                [severity]="editMode ? 'secondary' : 'info'"
+                [text]="true"
+                (onClick)="toggleEditMode()">
+              </p-button>
+            </div>
+          </ng-template>
+
+          <!-- Loading State -->
+          <div *ngIf="profileLoading" class="space-y-4">
+            <div>
+              <p-skeleton height="2.5rem" styleClass="mb-2"></p-skeleton>
+              <p-skeleton height="1rem" width="30%"></p-skeleton>
+            </div>
+            <div>
+              <p-skeleton height="2.5rem" styleClass="mb-2"></p-skeleton>
+              <p-skeleton height="1rem" width="30%"></p-skeleton>
+            </div>
+            <div>
+              <p-skeleton height="2.5rem" styleClass="mb-2"></p-skeleton>
+              <p-skeleton height="1rem" width="30%"></p-skeleton>
+            </div>
+            <p-skeleton height="2.5rem" styleClass="mt-4"></p-skeleton>
+          </div>
+
+          <!-- Error State -->
+          <p-message 
+            *ngIf="errorMessage && !profileLoading" 
+            severity="error" 
+            [text]="errorMessage"
+            styleClass="w-full mb-4">
+          </p-message>
+
+          <!-- Form -->
+          <form *ngIf="!profileLoading && user" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+            <!-- Display Mode -->
+            <div *ngIf="!editMode">
+              <div class="grid gap-4">
+                <div class="col-12 md:col-6">
+                  <p class="text-600 text-sm mb-2">
+                    <i class="pi pi-id-card mr-2"></i>Prénom
+                  </p>
+                  <p class="text-900 font-semibold m-0">{{ user.firstName }}</p>
+                </div>
+
+                <div class="col-12 md:col-6">
+                  <p class="text-600 text-sm mb-2">
+                    <i class="pi pi-id-card mr-2"></i>Nom
+                  </p>
+                  <p class="text-900 font-semibold m-0">{{ user.lastName }}</p>
+                </div>
+
+                <div class="col-12">
+                  <p class="text-600 text-sm mb-2">
+                    <i class="pi pi-envelope mr-2"></i>Email
+                  </p>
+                  <p class="text-900 font-semibold m-0">{{ user.email }}</p>
+                </div>
+
+                <div class="col-12">
+                  <p class="text-600 text-sm mb-2">
+                    <i class="pi pi-shield mr-2"></i>Rôle
+                  </p>
+                  <p-tag 
+                    [value]="user.role" 
+                    [severity]="user.role === 'ADMIN' ? 'danger' : 'info'">
+                  </p-tag>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit Mode -->
+            <div *ngIf="editMode">
+              <div class="grid gap-4 mb-4">
+                <div class="col-12 md:col-6">
+                  <label for="firstName" class="block mb-2 font-semibold">Prénom</label>
+                  <input 
+                    pInputText 
+                    id="firstName" 
+                    formControlName="firstName"
+                    class="w-full"
+                    [disabled]="submitting" />
+                  <small class="text-red-500" *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched">
+                    Le prénom est requis
+                  </small>
+                </div>
+
+                <div class="col-12 md:col-6">
+                  <label for="lastName" class="block mb-2 font-semibold">Nom</label>
+                  <input 
+                    pInputText 
+                    id="lastName" 
+                    formControlName="lastName"
+                    class="w-full"
+                    [disabled]="submitting" />
+                  <small class="text-red-500" *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched">
+                    Le nom est requis
+                  </small>
+                </div>
+
+                <div class="col-12">
+                  <label for="email" class="block mb-2 font-semibold">Email</label>
+                  <input 
+                    pInputText 
+                    id="email" 
+                    formControlName="email"
+                    class="w-full"
+                    [disabled]="true" />
+                  <small class="text-600">L'email ne peut pas être modifié</small>
+                </div>
+              </div>
+
+              <div class="flex gap-2 justify-content-end">
+                <p-button 
+                  label="Annuler" 
+                  severity="secondary"
+                  [disabled]="submitting"
+                  (onClick)="toggleEditMode()">
+                </p-button>
+                <p-button 
+                  label="Enregistrer" 
+                  icon="pi pi-check"
+                  [loading]="submitting"
+                  [disabled]="profileForm.invalid"
+                  type="submit">
+                </p-button>
+              </div>
+            </div>
+          </form>
+        </p-card>
+      </div>
+
+      <!-- Company Card -->
+      <div class="col-12 md:col-8 lg:col-6 mx-auto" data-aos="fade-up" [attr.data-aos-delay]="100">
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="px-4 pt-4 flex align-items-center justify-content-between">
+              <h2 class="m-0">
+                <i class="pi pi-building mr-2"></i>Entreprise
+              </h2>
+            </div>
+          </ng-template>
+
+          <!-- Loading State -->
+          <div *ngIf="companyLoading" class="space-y-3">
+            <p-skeleton height="2.5rem"></p-skeleton>
+            <p-skeleton height="2rem"></p-skeleton>
+            <p-skeleton height="2rem"></p-skeleton>
+          </div>
+
+          <!-- No Company -->
+          <div *ngIf="!companyLoading && !company" class="text-center py-4">
+            <i class="pi pi-inbox text-4xl text-400 mb-3 block"></i>
+            <p class="text-600 mb-4">Vous n'avez pas encore d'entreprise associée</p>
+            <p-button 
+              label="Créer une entreprise" 
+              icon="pi pi-plus"
+              (onClick)="openCompanyModal()">
+            </p-button>
+          </div>
+
+          <!-- Company Details -->
+          <div *ngIf="!companyLoading && company" class="space-y-4">
+            <div>
+              <p class="text-600 text-sm mb-2">
+                <i class="pi pi-building mr-2"></i>Nom de l'entreprise
+              </p>
+              <p class="text-900 font-semibold m-0">{{ company.name }}</p>
+            </div>
+
+            <div *ngIf="company.address">
+              <p class="text-600 text-sm mb-2">
+                <i class="pi pi-map-marker mr-2"></i>Adresse
+              </p>
+              <p class="text-900 m-0 whitespace-pre-wrap">{{ company.address }}</p>
+            </div>
+
+            <div *ngIf="company.taxNumber">
+              <p class="text-600 text-sm mb-2">
+                <i class="pi pi-file-pdf mr-2"></i>Numéro de TVA
+              </p>
+              <p class="text-900 font-mono m-0">{{ company.taxNumber }}</p>
+            </div>
+
+            <div *ngIf="company.phone">
+              <p class="text-600 text-sm mb-2">
+                <i class="pi pi-phone mr-2"></i>Téléphone
+              </p>
+              <a [href]="'tel:' + company.phone" class="text-blue-500 font-semibold no-underline hover:underline">
+                {{ company.phone }}
+              </a>
+            </div>
+
+            <div *ngIf="company.createdAt" class="text-600 text-sm pt-3 border-top-1 surface-border">
+              <i class="pi pi-calendar mr-2"></i>
+              Créée le {{ company.createdAt | date: 'dd/MM/yyyy' }}
+            </div>
+
+            <div class="flex gap-2 pt-3">
+              <p-button 
+                label="Modifier" 
+                icon="pi pi-pencil"
+                severity="info"
+                [text]="true"
+                (onClick)="openCompanyModal()">
+              </p-button>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Company Modal -->
+<app-company-modal 
+  [visible]="companyModalVisible"
+  (visibleChange)="companyModalVisible = $event"
+  [company]="company"
+  [isEdit]="!!company"
+  (success)="onCompanySuccess($event)">
+</app-company-modal>

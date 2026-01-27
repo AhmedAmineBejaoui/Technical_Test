@@ -1,0 +1,96 @@
+<div class="flex align-items-center justify-content-center min-h-screen surface-ground">
+  <div class="w-full max-w-25rem mx-3" data-aos="fade-up" data-aos-delay="100">
+    <p-card styleClass="shadow-4 border-round-xl">
+      <ng-template pTemplate="header">
+        <div class="text-center pt-5 pb-2" data-aos="fade-down">
+          <i class="pi pi-lock text-5xl text-primary mb-3"></i>
+          <h2 class="m-0 text-900 font-bold">Connexion</h2>
+          <p class="text-600 mt-2 mb-0">Accédez à votre compte Qartis</p>
+        </div>
+      </ng-template>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="p-fluid">
+        <!-- Error Message -->
+        <p-message 
+          *ngIf="errorMessage" 
+          severity="error" 
+          [text]="errorMessage"
+          styleClass="w-full mb-4"
+          data-aos="fade-in">
+        </p-message>
+
+        <!-- Email Field -->
+        <div class="field mb-4" data-aos="fade-right">
+          <label for="email" class="block text-900 font-medium mb-2">
+            <i class="pi pi-envelope mr-2"></i>Email
+          </label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-at"></i>
+            <input 
+              pInputText 
+              id="email" 
+              formControlName="email"
+              type="email"
+              placeholder="admin@demo.com"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': emailInvalid}" />
+          </span>
+          <small *ngIf="emailInvalid" class="p-error block mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>Email requis et valide
+          </small>
+        </div>
+
+        <!-- Password Field -->
+        <div class="field mb-4" data-aos="fade-left">
+          <label for="password" class="block text-900 font-medium mb-2">
+            <i class="pi pi-key mr-2"></i>Mot de passe
+          </label>
+          <p-password 
+            id="password" 
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            placeholder="••••••••"
+            styleClass="w-full"
+            [inputStyle]="{'width': '100%'}"
+            [inputStyleClass]="passwordInvalid ? 'ng-invalid ng-dirty' : ''">
+          </p-password>
+          <small *ngIf="passwordInvalid" class="p-error block mt-1">
+            <i class="pi pi-exclamation-circle mr-1"></i>Mot de passe requis
+          </small>
+        </div>
+
+        <!-- Submit Button -->
+        <p-button 
+          label="Se connecter" 
+          icon="pi pi-sign-in"
+          iconPos="right"
+          [loading]="loading"
+          [disabled]="loading"
+          styleClass="w-full p-button-lg"
+          type="submit">
+        </p-button>
+      </form>
+
+      <p-divider align="center" styleClass="my-4">
+        <span class="text-600 font-normal">OU</span>
+      </p-divider>
+
+      <div class="text-center">
+        <p class="text-600 m-0">
+          Pas encore de compte ? 
+          <a routerLink="/signup" class="text-primary font-bold no-underline hover:underline cursor-pointer">
+            S'inscrire
+          </a>
+        </p>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <div class="text-center text-xs text-500 pt-2">
+          <i class="pi pi-shield mr-1"></i>
+          Connexion sécurisée · Qartis © 2026
+        </div>
+      </ng-template>
+    </p-card>
+  </div>
+</div>

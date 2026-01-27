@@ -1,0 +1,148 @@
+<div class="min-h-screen surface-ground">
+  <!-- Header -->
+  <div class="surface-card border-bottom-1 surface-border px-5 py-3">
+    <div class="flex align-items-center justify-content-between">
+      <div class="flex align-items-center">
+        <p-button 
+          icon="pi pi-arrow-left" 
+          severity="secondary"
+          [text]="true"
+          [rounded]="true"
+          class="mr-3"
+          pTooltip="Retour aux utilisateurs"
+          (onClick)="goBack()">
+        </p-button>
+        <h1 class="text-2xl font-bold text-900 m-0">
+          <i class="pi pi-building mr-2 text-primary"></i>Détails de l'entreprise
+        </h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4">
+    <!-- Loading Skeleton -->
+    <p-card *ngIf="loading" styleClass="shadow-2">
+      <div class="grid">
+        <div class="col-12">
+          <p-skeleton width="60%" height="2rem" styleClass="mb-4"></p-skeleton>
+        </div>
+        <div class="col-12 md:col-6">
+          <p-skeleton width="40%" height="1rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="80%" height="1.5rem" styleClass="mb-4"></p-skeleton>
+        </div>
+        <div class="col-12 md:col-6">
+          <p-skeleton width="40%" height="1rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="80%" height="1.5rem" styleClass="mb-4"></p-skeleton>
+        </div>
+        <div class="col-12 md:col-6">
+          <p-skeleton width="40%" height="1rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="80%" height="1.5rem" styleClass="mb-4"></p-skeleton>
+        </div>
+        <div class="col-12 md:col-6">
+          <p-skeleton width="40%" height="1rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="80%" height="1.5rem"></p-skeleton>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Error State -->
+    <p-card *ngIf="!loading && error" styleClass="shadow-2">
+      <div class="text-center py-6">
+        <i class="pi pi-exclamation-triangle text-6xl text-orange-500 mb-4"></i>
+        <h2 class="text-900 font-bold mb-2">{{ error }}</h2>
+        <p class="text-600 mb-4">L'entreprise demandée n'a pas pu être trouvée.</p>
+        <p-button 
+          label="Retour à la liste" 
+          icon="pi pi-arrow-left"
+          (onClick)="goBack()">
+        </p-button>
+      </div>
+    </p-card>
+
+    <!-- Company Details -->
+    <p-card *ngIf="!loading && company" styleClass="shadow-2">
+      <ng-template pTemplate="header">
+        <div class="p-4 pb-0">
+          <div class="flex align-items-center">
+            <div class="flex align-items-center justify-content-center bg-primary border-round mr-4" style="width: 64px; height: 64px;">
+              <i class="pi pi-building text-white text-4xl"></i>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold text-900 m-0">{{ company.name }}</h2>
+              <p-tag value="Entreprise" severity="info" icon="pi pi-verified" class="mt-2"></p-tag>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <div class="grid mt-4">
+        <!-- Address -->
+        <div class="col-12 md:col-6 mb-4">
+          <div class="surface-100 border-round p-4">
+            <div class="flex align-items-center mb-2">
+              <i class="pi pi-map-marker text-primary mr-2"></i>
+              <span class="text-600 font-medium">Adresse</span>
+            </div>
+            <p class="text-900 font-semibold m-0 text-lg">
+              {{ company.address || '—' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Tax Number -->
+        <div class="col-12 md:col-6 mb-4">
+          <div class="surface-100 border-round p-4">
+            <div class="flex align-items-center mb-2">
+              <i class="pi pi-id-card text-primary mr-2"></i>
+              <span class="text-600 font-medium">Numéro fiscal</span>
+            </div>
+            <p class="text-900 font-semibold m-0 text-lg">
+              {{ company.taxNumber || '—' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="col-12 md:col-6 mb-4">
+          <div class="surface-100 border-round p-4">
+            <div class="flex align-items-center mb-2">
+              <i class="pi pi-phone text-primary mr-2"></i>
+              <span class="text-600 font-medium">Téléphone</span>
+            </div>
+            <p class="text-900 font-semibold m-0 text-lg">
+              <a *ngIf="company.phone" [href]="'tel:' + company.phone" class="text-primary no-underline hover:underline">
+                {{ company.phone }}
+              </a>
+              <span *ngIf="!company.phone">—</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Created At -->
+        <div class="col-12 md:col-6 mb-4" *ngIf="company.createdAt">
+          <div class="surface-100 border-round p-4">
+            <div class="flex align-items-center mb-2">
+              <i class="pi pi-calendar text-primary mr-2"></i>
+              <span class="text-600 font-medium">Date de création</span>
+            </div>
+            <p class="text-900 font-semibold m-0 text-lg">
+              {{ company.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <div class="flex justify-content-between">
+          <p-button 
+            label="Retour aux utilisateurs" 
+            icon="pi pi-arrow-left"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="goBack()">
+          </p-button>
+        </div>
+      </ng-template>
+    </p-card>
+  </div>
+</div>

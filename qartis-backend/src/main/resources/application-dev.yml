@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3307/qartis_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: qartis
+    password: qartis123
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+jwt:
+  secret: dev-secret-key-qartis-2026-not-for-production
+  expiration: 86400000
