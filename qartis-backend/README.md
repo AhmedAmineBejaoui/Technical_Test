@@ -87,7 +87,8 @@ server:
   port: 8080
 
 jwt:
-  secret: your-super-secret-key-minimum-32-chars-change-in-production
+<!-- Devora: Remove the secret from code and rotate the credential using vault/secrets manager. -->
+  <!-- Devora removed a suspected hardcoded secret. Move the value to a vault or CI/CD secret. -->
   expiration: 86400000
 ```
 
