@@ -62,35 +62,18 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-### 2. Configurer application.yml
+### 2. Configure environment variables
 
-Modifiez `src/main/resources/application.yml`:
+The development profile reads its database connection and JWT signing key from environment variables. Use `.env.example` as a reference, then export the values in your terminal or configure them in your IDE/run configuration.
 
-```yaml
-spring:
-  application:
-    name: qartis-app
-  datasource:
-    url: jdbc:mysql://localhost:3306/qartis?serverTimezone=UTC&useSSL=false
-    username: qartis_user
-    password: QartisPassword123!
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create-drop  # 'update' en production
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
-
-server:
-  port: 8080
-
-jwt:
-<!-- Devora: Remove the secret from code and rotate the credential using vault/secrets manager. -->
-  <!-- Devora removed a suspected hardcoded secret. Move the value to a vault or CI/CD secret. -->
-  expiration: 86400000
+```bash
+export DB_URL='jdbc:mysql://127.0.0.1:3306/qartis?serverTimezone=UTC&useSSL=false'
+export DB_USERNAME='qartis_user'
+export DB_PASSWORD='<your-database-password>'
+export JWT_SECRET='<a-long-random-signing-key>'
 ```
+
+Never commit real credentials or a JWT signing key.
 
 ## 🚀 Commandes d'exécution
 
